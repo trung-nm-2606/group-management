@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/', function(req, res){
-   res.json({ text: "Greeting.GET", params: req.query });
+   res.json({ text: 'Greeting.GET', params: req.query });
 });
 
 router.get('/:name', function(req, res){
@@ -10,7 +10,7 @@ router.get('/:name', function(req, res){
 });
 
 router.post('/', function(req, res){
-  res.json({ text: "Greeting.POST" });
+  res.json({ text: 'Greeting.POST' });
 });
 
 //export this router to use in our index.js

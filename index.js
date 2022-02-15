@@ -13,7 +13,7 @@ app.use(cookieParser()); // To parse cookie json -> req.cookies
 app.use('/public', express.static('public'));
 
 app.get('/', function(req, res) {
-  res.send("Welcome to Group Management");
+  res.send('Welcome to Group Management');
 });
 
 app.use('/greetings', greetings);
