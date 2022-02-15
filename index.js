@@ -5,8 +5,12 @@ var multer = require('multer');
 var session = require('express-session');
 
 var greetings = require('./greetings/index.js');
+var users = require('./users/index.js');
 
 var app = express();
+
+app.set('view engine', 'pug');
+app.set('views','./views');
 
 app.use(bodyParser.urlencoded({ extended: false })); // To parse URL encoded data
 app.use(bodyParser.json()); // To parse request json -> req.body
@@ -28,5 +32,6 @@ app.get('/', function(req, res) {
 });
 
 app.use('/greetings', greetings);
+app.use(users);
 
 app.listen(3000);
