@@ -3,13 +3,14 @@ var db = require('../db');
 
 var router = express.Router();
 
-router.get('/', function(req, res){
-  db.query('select * from users where pk = 1', (err, rows) => {
-    if (err) return;
-
-    const lord = rows[0];
-    res.json({ text: 'Greeting.GET', lord });
-  });
+router.get('/', async (req, res) => {
+  const query = 'select * from users where pk = 1';
+  try {
+    rows = await db.query(query);
+    res.json({ text: 'Greeting.GET', lord: rows[0] });
+  } catch (e) {
+    res.json({ text: 'Greeting.GET' });
+  }
 });
 
 router.get('/:name', function(req, res){
