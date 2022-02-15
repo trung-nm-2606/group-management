@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/', function(req, res){
-   res.json({ text: "Greeting.GET" });
+   res.json({ text: "Greeting.GET", params: req.query });
 });
 
 router.get('/:name', function(req, res){
