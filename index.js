@@ -1,5 +1,5 @@
 var express = require('express');
-var greetings = require('./greetings.js');
+var greetings = require('./greetings/index.js');
 var app = express();
 
 app.get('/', function(req, res) {
