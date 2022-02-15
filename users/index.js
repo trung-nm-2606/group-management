@@ -1,8 +1,7 @@
 var express = require('express');
+var userRepo = require('./userRepo');
 
 var router = express.Router();
-
-const Users = [];
 
 const signup = (req, res) => {
   res.render('signup');
@@ -13,16 +12,11 @@ const handleSignup = (req, res) => {
   if (!name || !email || !password) {
     res.render('signup', { message: 'Invalid signup information' });
   } else {
-    const user = Users.find(user => user.email === email);
+    const user = userRepo.findByEmailOrName(email);
     if (user) {
       res.render('signup', { message: 'Your account already exist. Login or create another account' });
     } else {
-      const newUser = {
-        name,
-        email,
-        password
-      };
-      Users.push(newUser);
+      const newUser = userRepo.createNewUser(name, email, password);
       req.session.authUser = newUser;
       res.redirect('/login');
     }
@@ -41,9 +35,7 @@ const handleLogin = (req, res) => {
   if (!emailOrAccountName || !password) {
     res.render('login', { message: 'Wrong username/email or password' });
   } else {
-    const user = Users.find(u => {
-      return (u.name === emailOrAccountName || u.email === emailOrAccountName) && u.password === password;
-    });
+    const user = userRepo.authenticate(emailOrAccountName, password);
     if (user) {
       req.session.authUser = user;
       res.redirect('/protected-page');
