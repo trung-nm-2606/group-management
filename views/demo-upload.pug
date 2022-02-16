@@ -1,0 +1,9 @@
+html
+  head
+    title
+      | Upload - Group Management
+  body
+    form(action = "/demo-upload" method = "POST" enctype='multipart/form-data')
+      input(name = "name" type = "text" placeholder = "Enter your name")
+      input(name = "image" type = "file")
+      button(type = "Submit") Upload
