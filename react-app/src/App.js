@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-import Nav from './Nav';
+import Layout from './Layout';
+import AppRoutes from './AppRoutes';
 
 const pingAuth = () => axios.get('/api/users/auth-ping');
 
 const App = () => {
-  const [auth, setAuth] = useState(false);
+  const [auth, setAuth] = useState(true);
 
   const handleAuthCheck = useCallback((res) => {
     const authenticated = res.data;
     if (!authenticated) {
-      window.location.href = '/login';
+      // window.location.href = '/login';
     } else {
       setAuth(true);
     }
@@ -36,9 +37,9 @@ const App = () => {
   if (!auth) return "Bootstrapping...";
 
   return (
-    <>
-      <Nav />
-    </>
+    <Layout>
+      <AppRoutes />
+    </Layout>
   );
 }
 
