@@ -32,9 +32,16 @@ repo.findUserByName = async (name) => {
   }
 };
 
-repo.createNewUser = (name, email, password) => {
-  const newUser = { name, email, password };
-  return newUser;
+repo.createNewUser = async (email, password) => {
+  const query = 'insert into users(email, encrypted_password) values(?,?)';
+  try {
+    await db.query(query, [email, password]);
+    console.log(`New user(${email}) created successfully`);
+    return true;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
 };
 
 repo.authenticate = async (email, password) => {

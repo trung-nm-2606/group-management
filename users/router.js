@@ -7,18 +7,21 @@ const signup = (req, res) => {
   res.render('signup');
 };
 
-const handleSignup = (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
-    res.render('signup', { message: 'Invalid signup information' });
+const handleSignup = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.render('signup', { message: 'Invalid registration information' });
   } else {
-    const user = userRepo.findUserByEmail(email);
+    const user = await userRepo.findUserByEmail(email);
     if (user) {
-      res.render('signup', { message: 'Your account already exist. Login or create another account' });
+      res.render('signup', { message: 'Your email already exist. Login or create a new account with different email.' });
     } else {
-      const newUser = userRepo.createNewUser(name, email, password);
-      req.session.authUser = newUser;
-      res.redirect('/login');
+      const success = await userRepo.createNewUser(email, password);
+      if (success) {
+        res.redirect('/login');
+      } else {
+        res.render('signup', { message: 'Error!', isError: true });
+      }
     }
   }
 };

@@ -9,7 +9,7 @@ html
       img.login-img.mb-4(src="/public/login_icon.png", alt="")
       h1.h3.mb-3.font-weight-normal Please login
       if (message)
-        div.alert.alert-danger #{message}
+        p.text-danger #{message}
       label.sr-only(for="email") Email address
       input.form-control(name = "email" type = "email" required placeholder = "Email address")
       label.sr-only(for="password") Password
