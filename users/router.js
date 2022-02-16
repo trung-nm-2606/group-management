@@ -16,10 +16,15 @@ const handleSignup = async (req, res) => {
     if (user) {
       res.render('signup', { message: 'Your email already exist. Login or create a new account with different email.' });
     } else {
-      const success = await userRepo.createNewUser(email, password);
-      if (success) {
-        res.redirect('/login');
-      } else {
+      try {
+        const success = await userRepo.createNewUser(email, password);
+        if (success) {
+          res.redirect('/login');
+        } else {
+          res.render('signup', { message: 'Error!', isError: true });
+        }
+      } catch (e) {
+        console.log(e);
         res.render('signup', { message: 'Error!', isError: true });
       }
     }

@@ -33,15 +33,65 @@ repo.findUserByName = async (name) => {
 };
 
 repo.createNewUser = async (email, password) => {
-  const query = 'insert into users(email, encrypted_password) values(?,?)';
-  try {
-    await db.query(query, [email, password]);
-    console.log(`New user(${email}) created successfully`);
-    return true;
-  } catch (e) {
-    console.log(e);
-    return false;
-  }
+  return new Promise((resolve, reject) => {
+    db.getConnection((err, connection) => {
+      if (err) {
+        reject(err);
+      }
+      connection.beginTransaction((err) => {
+        if (err) {
+          connection.rollback(() => {
+            connection.release();
+            reject(err);
+          });
+        } else {
+          const query = 'insert into users(email, encrypted_password) values(?,?)';
+          connection.query(query, [email, password], (err, result) => {
+            if (err) {
+              connection.rollback(() => {
+                connection.release();
+                reject(err);
+              });
+            } else {
+              const userPk = result.insertId;
+              const query = 'insert into groups(name, `desc`) values(?,?)';
+              connection.query(query, ['Your Group', 'Your initially default group'], (err, result) => {
+                if (err) {
+                  connection.rollback(() => {
+                    connection.release();
+                    reject(err);
+                  });
+                } else {
+                  const groupPk = result.insertId;
+                  const query = 'insert into groups_users(group_pk, user_pk) values(?,?)';
+                  connection.query(query, [groupPk, userPk], (err) => {
+                    if (err) {
+                      connection.rollback(() => {
+                        connection.release();
+                        reject(err);
+                      });
+                    } else {
+                      connection.commit((err) => {
+                        if (err) {
+                          connection.rollback(() => {
+                            connection.release();
+                            reject(err);
+                          });
+                        } else {
+                          connection.release();
+                          resolve(true);
+                        }
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+    });
+  });
 };
 
 repo.authenticate = async (email, password) => {
