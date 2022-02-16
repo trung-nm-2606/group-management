@@ -28,4 +28,4 @@ app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, 'react-app/build/index.html'));
 });
 
-app.listen(3000);
+app.listen(8080);

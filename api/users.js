@@ -1,5 +1,6 @@
 const express = require('express');
 const userRepo = require('../users/repo');
+const userServices = require('../users/services');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -10,7 +11,16 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+const authPing = (req, res) => {
+  if (userServices.isUserAuthenticated(req)) {
+    res.send(true);
+  } else {
+    res.send(false);
+  }
+};
+
 const api = express.Router();
 api.get('/', getAllUsers);
+api.get('/auth-ping', authPing);
 
 module.exports = api;
