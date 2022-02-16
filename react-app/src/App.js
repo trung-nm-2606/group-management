@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import axios from 'axios';
-import './App.css';
+import Nav from './Nav';
 
 const App = () => {
   useEffect(() => {
@@ -8,17 +8,15 @@ const App = () => {
       .then(res => {
         const authenticated = res.data;
         if (!authenticated) {
-          window.location.href = '/login';
+          // window.location.href = '/login';
         }
       })
   }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src="/public/login_icon.png" alt="logo" />
-      </header>
-    </div>
+    <>
+      <Nav />
+    </>
   );
 }
 
