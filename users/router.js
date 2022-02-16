@@ -1,5 +1,5 @@
 var express = require('express');
-var userRepo = require('./userRepo');
+var userRepo = require('./repo');
 
 var router = express.Router();
 
@@ -12,7 +12,7 @@ const handleSignup = (req, res) => {
   if (!name || !email || !password) {
     res.render('signup', { message: 'Invalid signup information' });
   } else {
-    const user = userRepo.findByEmailOrName(email);
+    const user = userRepo.findUserByEmail(email);
     if (user) {
       res.render('signup', { message: 'Your account already exist. Login or create another account' });
     } else {
