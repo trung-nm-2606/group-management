@@ -6,6 +6,7 @@ var path = require('path');
 var app = express();
 
 var api = require('./api');
+var userRouter = require('./users/router');
 
 app.set('view engine', 'pug');
 app.set('views','./views');
@@ -16,9 +17,11 @@ app.use(cookieParser()); // To parse cookie json -> req.cookies
 app.use(session({secret: `s3cr3t`}));
 
 app.use('/uploads', express.static('uploads'));
+app.use('/public', express.static('public'));
 app.use(express.static('react-app/build'));
 
 app.use('/api', api);
+app.use(userRouter);
 
 // All not-found routes served by ExpressJs will be directed to ReactJS
 app.use((req, res, next) => {
