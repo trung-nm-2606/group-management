@@ -44,7 +44,12 @@ const Nav = () => {
                 justifyContent="center"
                 alignItems="center"
               >
-                <Grid item mr={1}>
+                <Grid
+                  item
+                  sx={{
+                    marginRight: { xs: '24px', sm: '24px', md: '16px' },
+                  }}
+                >
                   <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <HomeIcon color="primary" />
                   </Link>
