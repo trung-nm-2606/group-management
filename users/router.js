@@ -27,20 +27,20 @@ const login = (req, res) => {
   res.render('login');
 };
 
-const handleLogin = (req, res) => {
+const handleLogin = async (req, res) => {
   const {
-    email_or_account_name: emailOrAccountName,
+    email,
     password
   } = req.body;
-  if (!emailOrAccountName || !password) {
-    res.render('login', { message: 'Wrong username/email or password' });
+  if (!email || !password) {
+    res.render('login', { message: 'Credentials missing' });
   } else {
-    const user = userRepo.authenticate(emailOrAccountName, password);
-    if (user) {
-      req.session.authUser = user;
-      res.redirect('/protected-page');
+    const { authenticated, message, authUser } = await userRepo.authenticate(email, password);
+    if (authenticated) {
+      req.session.authUser = authUser;
+      res.redirect('/');
     } else {
-      res.render('login', { message: 'Wrong username/email or password' });
+      res.render('login', { message });
     }
   }
 };
@@ -53,23 +53,9 @@ const logout = (req, res) => {
  res.redirect('/login');
 };
 
-const checkAuthUser = (req, res, next) => {
-  const { authUser } = req.session;
-  if (!authUser) {
-    res.redirect('/login');
-  } else {
-    next();
-  }
-};
-
-const protectedPage = (req, res) => {
-  res.render('protected-page');
-};
-
 router.get('/signup', signup);
 router.get('/login', login);
 router.get('/logout', logout);
-router.get('/protected-page', checkAuthUser, protectedPage);
 
 router.post('/signup', handleSignup);
 router.post('/login', handleLogin);
