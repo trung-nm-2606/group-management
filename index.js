@@ -5,6 +5,8 @@ var session = require('express-session');
 var path = require('path');
 var app = express();
 
+var api = require('./api');
+
 app.set('view engine', 'pug');
 app.set('views','./views');
 
@@ -16,6 +18,9 @@ app.use(session({secret: `s3cr3t`}));
 app.use('/uploads', express.static('uploads'));
 app.use(express.static('react-app/build'));
 
+app.use('/api', api);
+
+// All not-found routes served by ExpressJs will be directed to ReactJS
 app.use((req, res, next) => {
   res.sendFile(path.join(__dirname, 'react-app/build/index.html'));
 });
