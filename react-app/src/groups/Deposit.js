@@ -11,6 +11,7 @@ import Alert from '@mui/material/Alert';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Link } from 'react-router-dom';
 
 const Deposit = () => {
   const [fundItems, setFundItems] = useState([]);
@@ -41,7 +42,7 @@ const Deposit = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {fundItems.map(({ pk, name, desc, content, pricePerMember, status, createdAt, updatedAt }, index) => (
+            {fundItems.map(({ pk, name, pricePerMember, status, createdAt, updatedAt }, index) => (
               <TableRow
                 key={`${pk}_${index}`}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -53,15 +54,17 @@ const Deposit = () => {
                 <TableCell>{(new Date(createdAt)).toLocaleString()}</TableCell>
                 <TableCell>{(new Date(updatedAt)).toLocaleString()}</TableCell>
                 <TableCell>
-                  <Tooltip title="View fund item">
-                    <IconButton
-                      color="info"
-                      aria-label="view fund item"
-                      component="span"
-                    >
-                      <VisibilityIcon />
-                    </IconButton>
-                  </Tooltip>
+                  <Link style={{ textDecoration:"none", color: 'inherit' }} to={`/groups/deposit/${pk}`}>
+                    <Tooltip title="View fund item">
+                      <IconButton
+                        color="info"
+                        aria-label="view fund item"
+                        component="span"
+                      >
+                        <VisibilityIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}

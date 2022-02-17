@@ -18,6 +18,7 @@ import Info from './Info';
 import Deposit from './Deposit';
 import Members from './Members';
 import Withdrawal from './Withdrawal';
+import FundItem from './FundItem';
 
 const sideBarWidth = 240;
 
@@ -30,7 +31,6 @@ const GroupItems = [
 
 const Groups = () => {
   const { pathname } = useLocation();
-  const lastPath = pathname?.split('/')?.pop();
 
   return (
     <Grid
@@ -49,7 +49,7 @@ const Groups = () => {
         <List>
           {GroupItems.map(({ name, icon, path, color }) => (
             <Link key={path} to={path} style={{ textDecoration:"none", color }}>
-              <ListItem button key={name} selected={lastPath === path} >
+              <ListItem button key={name} selected={pathname?.includes(path)} >
                 <ListItemIcon sx={{ minWidth: 'auto' }}>
                   {icon}
                 </ListItemIcon>
@@ -74,10 +74,11 @@ const Groups = () => {
         }}
       >
         <Routes>
-          <Route path="info" element={<Info />}/>
-          <Route path="deposit" element={<Deposit />}/>
-          <Route path="withdrawal" element={<Withdrawal />}/>
-          <Route path="members" element={<Members />}/>
+          <Route exact path="info" element={<Info />}/>
+          <Route exact path="deposit" element={<Deposit />}/>
+          <Route exact path="deposit/:fundItemPk" element={<FundItem />}/>
+          <Route exact path="withdrawal" element={<Withdrawal />}/>
+          <Route exact path="members" element={<Members />}/>
           <Route exact path="/" element={<Navigate to="/groups/info" />}/>
         </Routes>
       </Grid>
