@@ -37,7 +37,16 @@ const checkGroupOwnerPermission = async (req, res, next) => {
 const getAllFundItemsByGroupPk = async (req, res) => {
   try {
     const items = await fundRepo.getAllFundItemsByGroupPk(req.params.group_pk);
-    return res.json(items);
+    return res.json(items.map(({ pk, name, desc, content, price_per_member, status, created_at, updated_at }) => ({
+      pk,
+      name,
+      desc,
+      content,
+      pricePerMember: price_per_member,
+      status,
+      createdAt: created_at,
+      updatedAt: updated_at
+    })));
   } catch (e) {
     return res.json([]);
   }
