@@ -1,23 +1,8 @@
 const express = require('express');
+const shared = require('./shared.js');
 const groupRepo = require('../groups/repo');
 const userServices = require('../users/services');
 const userRepo = require('../users/repo');
-
-/**
- * Check if user is logged in to proceed further operation
- *
- * @param {*} req
- * @param {*} res
- * @param {*} next
- */
-const checkUserAuth = async (req, res, next) => {
-  if (userServices.isUserAuthenticated(req)) {
-    next();
-  } else {
-    // Unauthorized 401
-    res.status(401).json({ oper: { status: false, error: 'User is not logged in' } });
-  }
-};
 
 /**
  * Check if the logged-in user is the owner of the given group to proceed further operation
@@ -156,9 +141,9 @@ const leaveGroup = async (req, res) => {
 const api = express.Router();
 api.get('/', getAllGroupsByUserPk);
 api.get('/:group_pk/members', getAllMembersByGroupPk);
-api.post('/:group_pk/add_members', checkUserAuth, checkGroupPermission, addMembersToGroup);
-api.post('/:group_pk/add_member_by_email', checkUserAuth, checkGroupPermission, addMemberToGroupByEmail);
-api.post('/:group_pk/remove_members', checkUserAuth, checkGroupPermission, removeMembersFromGroup);
-api.post('/:group_pk/leave', checkUserAuth, checkGroupPermission, leaveGroup);
+api.post('/:group_pk/add_members', shared.checkUserAuth, checkGroupPermission, addMembersToGroup);
+api.post('/:group_pk/add_member_by_email', shared.checkUserAuth, checkGroupPermission, addMemberToGroupByEmail);
+api.post('/:group_pk/remove_members', shared.checkUserAuth, checkGroupPermission, removeMembersFromGroup);
+api.post('/:group_pk/leave', shared.checkUserAuth, checkGroupPermission, leaveGroup);
 
 module.exports = api;
