@@ -1,6 +1,7 @@
 const express = require('express');
 const groupRepo = require('../groups/repo');
 const userServices = require('../users/services');
+const userRepo = require('../users/repo');
 
 /**
  * Check if user is logged in to proceed further operation
@@ -69,7 +70,33 @@ const addMembersToGroup = async (req, res) => {
   try {
     const success = await groupRepo.addMembersToGroup(req.params.group_pk, req.body.memberPks);
     if (success) {
-      res.json({ ...req.body, operStatus: true });
+      res.json({ ...req.body, oper: { status: true } });
+    } else {
+      res.json({ oper: { status: false, error: 'Cannot add members to group' } });
+    }
+  } catch (e) {
+    res.json({ oper: { status: false, error: 'Cannot add members to group' } });
+  }
+};
+
+const addMemberToGroupByEmail = async (req, res) => {
+  try {
+    const email = req.body?.email;
+    const member = await userRepo.findUserByEmail(email);
+    if (!member) {
+      res.json({ oper: { status: false, error: `User with email ${email} not found` } });
+      return;
+    }
+
+    const authUserPk = userServices.getAuthenticatedUser(req)?.pk;
+    if (authUserPk === member.pk) {
+      res.json({ oper: { status: false, error: 'Cannot add yourself as a member' } });
+      return;
+    }
+
+    const success = await groupRepo.addMembersToGroup(req.params.group_pk, [member.pk]);
+    if (success) {
+      res.json({ ...req.body, oper: { status: true } });
     } else {
       res.json({ oper: { status: false, error: 'Cannot add members to group' } });
     }
@@ -97,7 +124,7 @@ const removeMembersFromGroup = async (req, res) => {
   try {
     const success = await groupRepo.removeMembersFromGroup(req.params.group_pk, req.body.memberPks);
     if (success) {
-      res.json({ ...req.body, operStatus: true });
+      res.json({ ...req.body, oper: { status: true } });
     } else {
       res.json({ oper: { status: false, error: 'Cannot remove members from group' } });
     }
@@ -117,7 +144,7 @@ const leaveGroup = async (req, res) => {
     const userPk = userServices.getAuthenticatedUser(req)?.pk;
     const success = await groupRepo.removeMembersFromGroup(req.params.group_pk, [userPk]);
     if (success) {
-      res.json({ ...req.body, operStatus: true });
+      res.json({ ...req.body, oper: { status: true } });
     } else {
       res.json({ oper: { status: false, error: 'Cannot leave group' } });
     }
@@ -130,6 +157,7 @@ const api = express.Router();
 api.get('/', getAllGroupsByUserPk);
 api.get('/:group_pk/members', getAllMembersByGroupPk);
 api.post('/:group_pk/add_members', checkUserAuth, checkGroupPermission, addMembersToGroup);
+api.post('/:group_pk/add_member_by_email', checkUserAuth, checkGroupPermission, addMemberToGroupByEmail);
 api.post('/:group_pk/remove_members', checkUserAuth, checkGroupPermission, removeMembersFromGroup);
 api.post('/:group_pk/leave', checkUserAuth, checkGroupPermission, leaveGroup);
 
