@@ -1,23 +1,31 @@
-import { useLocation, Link, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  useLocation,
+  Link,
+  Routes,
+  Route,
+  Navigate
+} from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import PeopleIcon from '@mui/icons-material/People';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import InfoIcon from '@mui/icons-material/Info';
 import Grid from '@mui/material/Grid';
-import { pink, green } from '@mui/material/colors';
+import { red, green, blue, teal } from '@mui/material/colors';
 import Info from './Info';
-import Fund from './Fund';
+import Deposit from './Deposit';
 import Members from './Members';
+import Withdrawal from './Withdrawal';
 
 const sideBarWidth = 240;
 
 const GroupItems = [
-  { name: 'Info', path: 'info', icon: <InfoIcon color="info" /> },
-  { name: 'Fund', path: 'fund', icon: <AccountBalanceIcon sx={{ color: pink[500] }} /> },
-  { name: 'Members', path: 'members', icon: <PeopleIcon sx={{ color: green[500] }} /> }
+  { name: 'Info', path: 'info', icon: <InfoIcon color="info" />, color: blue[700] },
+  { name: 'Deposit', path: 'deposit', icon: <AccountBalanceWalletIcon sx={{ color: green[700] }} />, color: green[700] },
+  { name: 'Withdrawal', path: 'withdrawal', icon: <AccountBalanceWalletIcon sx={{ color: red[500] }} />, color: red[500] },
+  { name: 'Members', path: 'members', icon: <PeopleIcon sx={{ color: teal[700] }} />, color: teal[700] }
 ];
 
 const Groups = () => {
@@ -39,8 +47,8 @@ const Groups = () => {
         ml={-2}
       >
         <List>
-          {GroupItems.map(({ name, icon, path }) => (
-            <Link key={path} to={path} style={{ textDecoration:"none", color: 'inherit' }}>
+          {GroupItems.map(({ name, icon, path, color }) => (
+            <Link key={path} to={path} style={{ textDecoration:"none", color }}>
               <ListItem button key={name} selected={lastPath === path} >
                 <ListItemIcon sx={{ minWidth: 'auto' }}>
                   {icon}
@@ -66,10 +74,11 @@ const Groups = () => {
         }}
       >
         <Routes>
-          <Route exact path="/" element={<Navigate to="/groups/info" />}/>
           <Route path="info" element={<Info />}/>
-          <Route path="fund" element={<Fund />}/>
+          <Route path="deposit" element={<Deposit />}/>
+          <Route path="withdrawal" element={<Withdrawal />}/>
           <Route path="members" element={<Members />}/>
+          <Route exact path="/" element={<Navigate to="/groups/info" />}/>
         </Routes>
       </Grid>
     </Grid>

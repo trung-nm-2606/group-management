@@ -7,7 +7,8 @@ const AppRoutes = () => (
   <Routes>
     <Route path="/groups" element={<Groups />}>
       <Route path="info" element={<Groups />}/>
-      <Route path="fund" element={<Groups />}/>
+      <Route path="deposit" element={<Groups />}/>
+      <Route path="withdrawal" element={<Groups />}/>
       <Route path="members" element={<Groups />}/>
     </Route>
     <Route path="/" element={<Home />} />
