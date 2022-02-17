@@ -24,4 +24,9 @@ app.use(express.static('react-app/build'));
 app.use('/api', api);
 app.use(userRouter);
 
+// All not-found routes served by ExpressJs will be directed to ReactJS
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, 'react-app/build/index.html'));
+});
+
 app.listen(8080);
