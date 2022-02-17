@@ -19,6 +19,7 @@ import Deposit from './Deposit';
 import Members from './Members';
 import Withdrawal from './Withdrawal';
 import FundItem from './FundItem';
+import NewFundItem from './NewFundItem';
 
 const sideBarWidth = 240;
 
@@ -77,6 +78,7 @@ const Groups = () => {
           <Route exact path="info" element={<Info />}/>
           <Route exact path="deposit" element={<Deposit />}/>
           <Route exact path="deposit/:fundItemPk" element={<FundItem />}/>
+          <Route exact path="deposit/new-fund-item" element={<NewFundItem />}/>
           <Route exact path="withdrawal" element={<Withdrawal />}/>
           <Route exact path="members" element={<Members />}/>
           <Route exact path="/" element={<Navigate to="/groups/info" />}/>

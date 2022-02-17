@@ -12,6 +12,8 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link } from 'react-router-dom';
+import { Button, Grid } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 const Deposit = () => {
   const [fundItems, setFundItems] = useState([]);
@@ -28,6 +30,15 @@ const Deposit = () => {
       {error && (
         <Alert severity="error" sx={{ marginBottom: 1 }}>{error}</Alert>
       )}
+      <Grid container mb={1}>
+        <Grid item>
+          <Link style={{ textDecoration:"none", color: 'inherit' }} to={`/groups/deposit/new-fund-item`}>
+          <Button variant="outlined" startIcon={<AddIcon />}>
+            New Fund
+          </Button>
+          </Link>
+        </Grid>
+      </Grid>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="members listing" size="small">
           <TableHead>

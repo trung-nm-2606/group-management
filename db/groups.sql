@@ -1,4 +1,3 @@
--- auto-generated definition
 create table `groups`
 (
     pk     int(11) unsigned auto_increment

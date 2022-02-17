@@ -1,4 +1,3 @@
--- auto-generated definition
 create table groups_users
 (
     group_pk int(11) unsigned         not null,
