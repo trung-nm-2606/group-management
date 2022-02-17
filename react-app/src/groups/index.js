@@ -61,7 +61,8 @@ const Groups = () => {
         item
         sx={{
           width: { xs: `calc(100% - 40px)`, sm: `calc(100% - 40px)`, md: `calc(100% - ${sideBarWidth}px)` },
-          paddingLeft: '8px'
+          paddingLeft: '8px',
+          paddingTop: 2
         }}
       >
         <Routes>

@@ -48,7 +48,7 @@ const checkGroupPermission = async (req, res, next) => {
  * @param {*} req
  * @param {*} res
  */
-const getAllGroupByUserPk = async (req, res) => {
+const getAllGroupsByUserPk = async (req, res) => {
   try {
     const userPk = userServices.getAuthenticatedUser(req)?.pk;
     if (!userPk) res.json([]);
@@ -75,6 +75,15 @@ const addMembersToGroup = async (req, res) => {
     }
   } catch (e) {
     res.json({ oper: { status: false, error: 'Cannot add members to group' } });
+  }
+};
+
+const getAllMembersByGroupPk = async (req, res) => {
+  try {
+    const members = await groupRepo.findMembersOfGroup(req.params.group_pk);
+    res.json(members.map(({ pk, name, full_name, email }) => ({ pk, name, fullName: full_name, email })));
+  } catch (e) {
+    res.json([]);
   }
 };
 
@@ -118,7 +127,8 @@ const leaveGroup = async (req, res) => {
 };
 
 const api = express.Router();
-api.get('/', getAllGroupByUserPk);
+api.get('/', getAllGroupsByUserPk);
+api.get('/:group_pk/members', getAllMembersByGroupPk);
 api.post('/:group_pk/add_members', checkUserAuth, checkGroupPermission, addMembersToGroup);
 api.post('/:group_pk/remove_members', checkUserAuth, checkGroupPermission, removeMembersFromGroup);
 api.post('/:group_pk/leave', checkUserAuth, checkGroupPermission, leaveGroup);

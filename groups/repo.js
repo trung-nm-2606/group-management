@@ -22,6 +22,16 @@ repo.findGroupOwnedByUserPk = async (userPk) => {
   }
 };
 
+repo.findMembersOfGroup = async (groupPk) => {
+  const query = 'select * from users where pk in (select user_pk from groups_users where group_pk = ? and position = ?)';
+  try {
+    const members = await db.query(query, [groupPk, 'member']);
+    return members;
+  } catch (e) {
+    return [];
+  }
+};
+
 repo.addMembersToGroup = async (groupPk, memberPks = []) => {
   const query = 'insert into groups_users(group_pk, user_pk, position, active) values(?, ?, ?, ?)';
   try {
