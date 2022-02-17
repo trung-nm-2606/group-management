@@ -6,12 +6,12 @@ import AppRoutes from './AppRoutes';
 const pingAuth = () => axios.get('/api/users/auth-ping');
 
 const App = () => {
-  const [auth, setAuth] = useState(false);
+  const [auth, setAuth] = useState(true);
 
   const handleAuthCheck = useCallback((res) => {
     const authenticated = res.data;
     if (!authenticated) {
-      window.location.href = '/login';
+      // window.location.href = '/login';
     } else {
       setAuth(true);
     }
