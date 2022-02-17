@@ -110,10 +110,10 @@ const Members = () => {
               >
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
-                <Typography component="span" display="block">
-                  <Typography component="span" >{fullName}</Typography>
-                  <Typography variant="caption" display="block" color="text.disabled">{`@${name}`}</Typography>
-                </Typography>
+                  <Typography component="span" display="block">
+                    <Typography component="span" >{fullName}</Typography>
+                    <Typography variant="caption" display="block" color="text.disabled">{`@${name}`}</Typography>
+                  </Typography>
                 </TableCell>
                 <TableCell>{email}</TableCell>
                 <TableCell>

@@ -22,6 +22,17 @@ repo.getAllFundItemsByGroupPk = async (groupPk) => {
   }
 };
 
+repo.getAllFundTransactionByFundItemPk = async (fundItemPk) => {
+  const query = 'select ft.*, u.name, u.full_name, u.email from fund_transactions as ft left join users u on ft.user_pk = u.pk where ft.fund_item_pk = ?';
+  try {
+    const transactions = await db.query(query, [fundItemPk]);
+    return transactions;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
 repo.createFundItem = async (userPk, groupPk, { name, desc, content, pricePerMember }) => {
   const query = 'insert into fund_items(name, `desc`, content, price_per_member, created_by, updated_by, group_pk) values(?, ?, ?, ?, ?, ?, ?)';
   try {
