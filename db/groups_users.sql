@@ -1,8 +1,10 @@
 -- auto-generated definition
 create table groups_users
 (
-    group_pk int(11) unsigned not null,
-    user_pk  int(11) unsigned not null,
+    group_pk int(11) unsigned         not null,
+    user_pk  int(11) unsigned         not null,
+    position enum ('owner', 'member') not null,
+    active   tinyint(1)               not null,
     constraint groups_users_pk
         unique (group_pk, user_pk),
     constraint groups_users_groups_pk_fk

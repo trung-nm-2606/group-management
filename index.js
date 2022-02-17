@@ -7,7 +7,6 @@ var app = express();
 
 var api = require('./api');
 var userRouter = require('./users/router');
-var userServices = require('./users/services');
 
 app.set('view engine', 'pug');
 app.set('views','./views');

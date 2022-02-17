@@ -63,8 +63,8 @@ repo.createNewUser = async (email, password) => {
                   });
                 } else {
                   const groupPk = result.insertId;
-                  const query = 'insert into groups_users(group_pk, user_pk) values(?,?)';
-                  connection.query(query, [groupPk, userPk], (err) => {
+                  const query = 'insert into groups_users(group_pk, user_pk, position, active) values(?,?,?,?)';
+                  connection.query(query, [groupPk, userPk, 'owner', true], (err) => {
                     if (err) {
                       connection.rollback(() => {
                         connection.release();
