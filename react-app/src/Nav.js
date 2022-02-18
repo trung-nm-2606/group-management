@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,20 +14,32 @@ import MenuItem from '@mui/material/MenuItem';
 import Container from '@mui/material/Container';
 import HomeIcon from '@mui/icons-material/Home';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import appRedux from './redux/app';
 
-const settings = ['Profile', 'Logout'];
+const menuItems = [
+  { name: 'Profile', path: '/' },
+  { name: 'Logout', path: '/logout' }
+];
 
 const Nav = () => {
   const activeGroup = useSelector(state => state.app.context?.activeGroup);
+  const dispatch = useDispatch();
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (path) => {
     setAnchorElUser(null);
+    if (path === '/logout') {
+      axios
+        .get('/logout')
+        .then(() => dispatch(appRedux.actions.setIsUserAuthenticated(false)))
+        .catch(() => dispatch(appRedux.actions.setIsUserAuthenticated(false)))
+      ;
+    }
   };
 
   return (
@@ -88,9 +101,11 @@ const Nav = () => {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                      <Typography textAlign="center">{setting}</Typography>
+                  {menuItems.map(({ path, name }) => (
+                    <MenuItem key={path} onClick={() => handleCloseUserMenu(path)}>
+                      <Link to={path} style={{ textDecoration:"none", color: 'inherit' }}>
+                        <Typography textAlign="center">{name}</Typography>
+                      </Link>
                     </MenuItem>
                   ))}
                 </Menu>
