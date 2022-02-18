@@ -8,8 +8,10 @@ import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { Alert } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 const NewFundItem = () => {
+  const activeGroup = useSelector(state => state.app.context?.activeGroup);
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
   const [content, setContent] = useState('');
@@ -30,10 +32,11 @@ const NewFundItem = () => {
 
   const onCreateNewFundItem = useCallback((e) => {
     e.preventDefault();
+    if (!activeGroup?.pk) return;
     setAdding(true);
     setError(null);
     axios
-      .post('/api/fund/4/create_item', {
+      .post(`/api/fund/${activeGroup?.pk}/create_item`, {
         name: name?.trim(),
         desc: desc?.trim(),
         content: content?.trim(),
@@ -55,7 +58,7 @@ const NewFundItem = () => {
         setError(message);
       })
     ;
-  }, [clearForm, content, desc, initTransaction, name, pricePerMember]);
+  }, [clearForm, content, desc, initTransaction, name, pricePerMember, activeGroup]);
 
   return (
     <Grid container alignItems="center" justifyContent="center">

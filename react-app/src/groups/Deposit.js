@@ -14,16 +14,19 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link } from 'react-router-dom';
 import { Button, Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { useSelector } from 'react-redux';
 
 const Deposit = () => {
+  const activeGroup = useSelector(state => state.app.context?.activeGroup);
   const [fundItems, setFundItems] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!activeGroup?.pk) return;
     axios
-      .get('/api/fund/4/items')
+      .get(`/api/fund/${activeGroup?.pk}/items`)
       .then(res => setFundItems(res.data));
-  }, [setFundItems]);
+  }, [activeGroup, setFundItems]);
 
   return (
     <>

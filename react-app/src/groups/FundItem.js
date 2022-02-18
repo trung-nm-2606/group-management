@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import Alert from '@mui/material/Alert';
 import { Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const statusColorMapping = {
   unpaid: 'error.main',
@@ -17,15 +18,17 @@ const statusColorMapping = {
 };
 
 const FundItem = () => {
+  const activeGroup = useSelector(state => state.app.context?.activeGroup);
   const params = useParams();
   const [members, setMembers] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!activeGroup?.pk) return;
     axios
-      .get(`/api/fund/4/${params.fundItemPk}/transactions`)
+      .get(`/api/fund/${activeGroup?.pk}/${params.fundItemPk}/transactions`)
       .then(res => setMembers(res.data));
-  }, [setMembers]);
+  }, [activeGroup, params.fundItemPk, setMembers]);
 
   return (
     <>

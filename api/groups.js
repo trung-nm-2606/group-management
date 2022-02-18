@@ -14,6 +14,12 @@ const userRepo = require('../users/repo');
 const checkGroupPermission = async (req, res, next) => {
   const userPk = userServices.getAuthenticatedUser(req)?.pk;
   const { group_pk: groupPk } = req.params;
+
+  if (!groupPk) {
+    res.json({ oper: { status: false, error: 'Group not found' } });
+    return;
+  }
+
   try {
     const group = await groupRepo.findGroupOwnedByUserPk(userPk);
     if (!group || +group.pk !== +groupPk) {

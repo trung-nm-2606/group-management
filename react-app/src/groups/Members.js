@@ -15,34 +15,38 @@ import Alert from '@mui/material/Alert';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { useSelector } from 'react-redux';
 
 const Members = () => {
+  const activeGroup = useSelector(state => state.app.context?.activeGroup);
   const [members, setMembers] = useState([]);
   const [newMemberEmail, setNewMemberEmail] = useState(null);
   const [addingMember, setAddingMember] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!activeGroup?.pk) return;
     axios
-      .get('/api/groups/4/members')
+      .get(`/api/groups/${activeGroup?.pk}/members`)
       .then(res => setMembers(res.data));
-  }, [setMembers]);
+  }, [setMembers, activeGroup]);
 
   const onNewMemberEmailChange = useCallback((e) => {
     setNewMemberEmail(e.target.value);
   }, [setNewMemberEmail]);
 
   const onAddNewMember = useCallback(() => {
+    if (!activeGroup?.pk) return;
     setAddingMember(true);
     axios
-      .post('/api/groups/4/add_member_by_email', { email: newMemberEmail })
+      .post(`/api/groups/${activeGroup?.pk}/add_member_by_email`, { email: newMemberEmail })
       .then((res) => {
         const { oper = {} } = res.data;
         const { status, error } = oper;
         if (status) {
           setNewMemberEmail('');
           axios
-            .get('/api/groups/4/members')
+            .get(`/api/groups/${activeGroup?.pk}/members`)
             .then(res => setMembers(res.data))
           ;
         } else {
@@ -51,17 +55,18 @@ const Members = () => {
         setAddingMember(false);
       })
     ;
-  }, [newMemberEmail, setAddingMember, setMembers, setNewMemberEmail, setError]);
+  }, [newMemberEmail, setAddingMember, setMembers, setNewMemberEmail, setError, activeGroup]);
 
   const onRemoveMember = useCallback((userPk) => {
+    if (!activeGroup?.pk) return;
     axios
-      .post('/api/groups/4/remove_members', { memberPks: [userPk] })
+      .post(`/api/groups/${activeGroup?.pk}/remove_members`, { memberPks: [userPk] })
       .then((res) => {
         const { oper = {} } = res.data;
         const { status, error } = oper;
         if (status) {
           axios
-            .get('/api/groups/4/members')
+            .get(`/api/groups/${activeGroup?.pk}/members`)
             .then(res => setMembers(res.data))
           ;
         } else {
@@ -70,7 +75,7 @@ const Members = () => {
         setAddingMember(false);
       })
     ;
-  }, [setAddingMember, setMembers, setError]);
+  }, [setAddingMember, setMembers, setError, activeGroup]);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,11 +13,13 @@ import MenuItem from '@mui/material/MenuItem';
 import Container from '@mui/material/Container';
 import HomeIcon from '@mui/icons-material/Home';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const settings = ['Profile', 'Logout'];
 
 const Nav = () => {
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const activeGroup = useSelector(state => state.app.context?.activeGroup);
+  const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -56,7 +58,9 @@ const Nav = () => {
                 </Grid>
                 <Grid item>
                   <Button variant="outlined" style={{ textTransform: "none" }}>
-                    <Link to="/groups" style={{ textDecoration: 'none', color: 'inherit' }}>Your Group</Link>
+                    <Link to="/groups" style={{ textDecoration: 'none', color: 'inherit' }}>
+                      {activeGroup?.name}
+                    </Link>
                   </Button>
                 </Grid>
               </Grid>

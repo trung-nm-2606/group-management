@@ -2,6 +2,16 @@ const db = require('../shared/db');
 
 const repo = {};
 
+repo.findActiveGroupByUserPk = async (userPk) => {
+  const query = 'select * from `groups` left join groups_users gu on `groups`.pk = gu.group_pk where gu.user_pk = ? and gu.active = ?';
+  try {
+    const groups = await db.query(query, [userPk, 1]);
+    return groups[0];
+  } catch (e) {
+    return null;
+  }
+};
+
 repo.findGroupByPkAndUserPk = async (groupPk, userPk) => {
   const query = 'select * from `groups` left join groups_users gu on `groups`.pk = gu.group_pk where gu.group_pk = ? and gu.user_pk = ?';
   try {
