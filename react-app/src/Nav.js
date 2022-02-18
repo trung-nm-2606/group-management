@@ -72,7 +72,7 @@ const Nav = () => {
                 <Grid item>
                   <Button variant="outlined" style={{ textTransform: "none" }}>
                     <Link to="/groups" style={{ textDecoration: 'none', color: 'inherit' }}>
-                      {activeGroup?.name}
+                      {`${activeGroup?.name} (${activeGroup?.position})`}
                     </Link>
                   </Button>
                 </Grid>

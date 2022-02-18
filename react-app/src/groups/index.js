@@ -47,7 +47,7 @@ const Groups = () => {
         }}
         ml={-2}
       >
-        <List>
+        <List sx={{ padding: 0 }}>
           {GroupItems.map(({ name, icon, path, color }) => (
             <Link key={path} to={path} style={{ textDecoration:"none", color }}>
               <ListItem button key={name} selected={pathname?.includes(path)} >
@@ -71,7 +71,6 @@ const Groups = () => {
         sx={{
           width: { xs: `calc(100% - 40px)`, sm: `calc(100% - 40px)`, md: `calc(100% - ${sideBarWidth}px)` },
           paddingLeft: '8px',
-          paddingTop: 2
         }}
       >
         <Routes>
