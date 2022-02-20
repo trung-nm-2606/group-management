@@ -1,31 +1,66 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Card, CardActions, CardContent, Grid, Typography } from '@mui/material';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const Info = () => {
   const activeGroup = useSelector(state => state.app.context?.activeGroup);
   const [groupInfo, setGroupInfo] = useState(null);
+  const [error, setError] = useState(null);
+  const [gettingGroupInfo, setGettingGroupInfo] = useState(true);
+
+  const getGroupInfo = useCallback((groupPk) => {
+    if (!groupPk || groupPk < 0) {
+      setGettingGroupInfo(false);
+      setError('Cannot get group info');
+      setGroupInfo(null);
+    }
+
+    setGettingGroupInfo(true);
+    setError(null);
+    setGroupInfo(null);
+    axios
+      .get(`/api/groups/${groupPk}/info`)
+      .then((res) => {
+        const data = res.data;
+        if (!data || +data.pk !== +groupPk) {
+          setGroupInfo(null);
+          setError('Cannot get group info');
+        } else {
+          setGroupInfo(res.data);
+          setError(null);
+        }
+        setGettingGroupInfo(false);
+      })
+      .catch(() => {
+        setError('Cannot get group info');
+        setGroupInfo(null);
+        setGettingGroupInfo(false);
+      });
+    ;
+  }, []);
 
   useEffect(() => {
-    if (activeGroup && activeGroup.pk > 0) {
-      axios
-        .get(`/api/groups/${activeGroup.pk}/info`)
-        .then((res) => {
-          const data = res.data;
-          if (!data || +data.pk !== +activeGroup.pk) {
-            setGroupInfo(null);
-          } else {
-            setGroupInfo(res.data);
-          }
-        })
-        .catch(() => setGroupInfo(null));
-      ;
-    }
-  }, [activeGroup]);
+    getGroupInfo(activeGroup.pk);
+  }, [activeGroup, getGroupInfo]);
 
-  if (!groupInfo) {
+  if (error) {
+    return (
+      <>
+        <Alert severity="error" sx={{ marginBottom: 1 }}>{error}</Alert>
+        <Button onClick={() => getGroupInfo(activeGroup?.pk)}>Retry Getting Info</Button>
+      </>
+    );
+  }
+
+  if (gettingGroupInfo) {
     return 'Getting info...';
   }
 
