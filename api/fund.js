@@ -46,9 +46,9 @@ const checkGroupOwnerPermission = async (req, res, next) => {
   }
 };
 
-const getAllFundItemsByGroupPk = async (req, res) => {
+const findAllFundItemsByGroupPk = async (req, res) => {
   try {
-    const items = await fundRepo.getAllFundItemsByGroupPk(req.params.group_pk);
+    const items = await fundRepo.findAllFundItemsByGroupPk(req.params.group_pk);
     res.json(items.map(({ pk, name, desc, content, price_per_member, status, created_at, updated_at }) => ({
       pk,
       name,
@@ -92,9 +92,9 @@ const createFundItem = async (req, res) => {
   }
 };
 
-const getAllFundTransactionByFundItemPk = async (req, res) => {
+const findAllFundTransactionByFundItemPk = async (req, res) => {
   try {
-    const transactions = await fundRepo.getAllFundTransactionByFundItemPk(req.params.fund_item_pk);
+    const transactions = await fundRepo.findAllFundTransactionByFundItemPk(req.params.fund_item_pk);
     res.json(transactions.map(({ pk, proof, status, paid_price, name, full_name, email }) => ({
       pk,
       proof,
@@ -111,8 +111,8 @@ const getAllFundTransactionByFundItemPk = async (req, res) => {
 };
 
 const api = express.Router();
-api.get('/:group_pk/items', shared.checkUserAuth, checkGroupPermission, getAllFundItemsByGroupPk);
+api.get('/:group_pk/items', shared.checkUserAuth, checkGroupPermission, findAllFundItemsByGroupPk);
 api.post('/:group_pk/create_item', shared.checkUserAuth, checkGroupOwnerPermission, createFundItem);
-api.get('/:group_pk/:fund_item_pk/transactions', shared.checkUserAuth, checkGroupPermission, getAllFundTransactionByFundItemPk);
+api.get('/:group_pk/:fund_item_pk/transactions', shared.checkUserAuth, checkGroupPermission, findAllFundTransactionByFundItemPk);
 
 module.exports = api;

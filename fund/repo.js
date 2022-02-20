@@ -2,7 +2,7 @@ const db = require('../shared/db');
 
 const repo = {};
 
-repo.getAllFundItemsByUserPk = async (userPk) => {
+repo.findAllFundItemsByUserPk = async (userPk) => {
   const query = 'select * from fund_items where created_by = ?';
   try {
     const fundItems = await db.query(query, [userPk]);
@@ -12,7 +12,7 @@ repo.getAllFundItemsByUserPk = async (userPk) => {
   }
 };
 
-repo.getAllFundItemsByGroupPk = async (groupPk) => {
+repo.findAllFundItemsByGroupPk = async (groupPk) => {
   const query = 'select * from fund_items where group_pk = ?';
   try {
     const fundItems = await db.query(query, [groupPk]);
@@ -22,7 +22,7 @@ repo.getAllFundItemsByGroupPk = async (groupPk) => {
   }
 };
 
-repo.getAllFundTransactionByFundItemPk = async (fundItemPk) => {
+repo.findAllFundTransactionByFundItemPk = async (fundItemPk) => {
   const query = 'select ft.*, u.name, u.full_name, u.email from fund_transactions as ft left join users u on ft.user_pk = u.pk where ft.fund_item_pk = ?';
   try {
     const transactions = await db.query(query, [fundItemPk]);

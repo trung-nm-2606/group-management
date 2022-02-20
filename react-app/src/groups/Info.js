@@ -1,10 +1,33 @@
-import { Box, Button, Card, CardActions, CardContent, Grid, Paper, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Button, Card, CardActions, CardContent, Grid, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const Info = () => {
   const activeGroup = useSelector(state => state.app.context?.activeGroup);
+  const [groupInfo, setGroupInfo] = useState(null);
+
+  useEffect(() => {
+    if (activeGroup && activeGroup.pk > 0) {
+      axios
+        .get(`/api/groups/${activeGroup.pk}/info`)
+        .then((res) => {
+          const data = res.data;
+          if (!data || +data.pk !== +activeGroup.pk) {
+            setGroupInfo(null);
+          } else {
+            setGroupInfo(res.data);
+          }
+        })
+        .catch(() => setGroupInfo(null));
+      ;
+    }
+  }, [activeGroup]);
+
+  if (!groupInfo) {
+    return 'Getting info...';
+  }
 
   return (
     <>
@@ -22,7 +45,9 @@ const Info = () => {
                 {activeGroup?.desc}
               </Typography>
               <Typography color="primary" variant="caption" component="div">
-                <Link to="/groups/members" style={{ textDecoration: 'none', color: 'inherit' }}>(2 member)</Link>
+                <Link to="/groups/members" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  {`(${groupInfo.numberOfMembers} members)`}
+                </Link>
               </Typography>
             </CardContent>
             <CardActions>
@@ -42,7 +67,9 @@ const Info = () => {
                 2,000,000 VND
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="primary" variant="caption" component="div">
-                <Link to="/groups/deposit" style={{ textDecoration: 'none', color: 'inherit' }}>(5 fund items)</Link>
+                <Link to="/groups/deposit" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  {`(${groupInfo.numberOfFundItems} fund items)`}
+                </Link>
               </Typography>
             </CardContent>
           </Card>

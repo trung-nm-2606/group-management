@@ -3,6 +3,7 @@ const shared = require('./shared.js');
 const groupRepo = require('../groups/repo');
 const userServices = require('../users/services');
 const userRepo = require('../users/repo');
+const fundRepo = require('../fund/repo');
 
 /**
  * Check if the logged-in user is the owner of the given group to proceed further operation
@@ -105,6 +106,21 @@ const getAllMembersByGroupPk = async (req, res) => {
   }
 };
 
+const getGroupInfoByGroupPk = async (req, res) => {
+  try {
+    const groupPk = req.params.group_pk;
+    const members = await groupRepo.findMembersOfGroup(groupPk);
+    const fundItems = await fundRepo.findAllFundItemsByGroupPk(groupPk);
+    res.json({
+      pk: groupPk,
+      numberOfMembers: members.length,
+      numberOfFundItems: fundItems.length
+    });
+  } catch (e) {
+    res.json({});
+  }
+};
+
 /**
  * Remove member users from the given group
  *
@@ -145,8 +161,9 @@ const leaveGroup = async (req, res) => {
 };
 
 const api = express.Router();
-api.get('/', getAllGroupsByUserPk);
-api.get('/:group_pk/members', getAllMembersByGroupPk);
+api.get('/', shared.checkUserAuth, getAllGroupsByUserPk);
+api.get('/:group_pk/members', shared.checkUserAuth, getAllMembersByGroupPk);
+api.get('/:group_pk/info', shared.checkUserAuth, getGroupInfoByGroupPk);
 api.post('/:group_pk/add_members', shared.checkUserAuth, checkGroupPermission, addMembersToGroup);
 api.post('/:group_pk/add_member_by_email', shared.checkUserAuth, checkGroupPermission, addMemberToGroupByEmail);
 api.post('/:group_pk/remove_members', shared.checkUserAuth, checkGroupPermission, removeMembersFromGroup);
