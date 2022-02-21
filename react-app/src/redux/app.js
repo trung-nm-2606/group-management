@@ -10,7 +10,8 @@ const appRedux = createSlice({
   initialState,
   reducers: {
     setIsUserAuthenticated: (state, { payload: isAuthenticated }) => { state.isUserAuthenticated = isAuthenticated },
-    setAppContext: (state, { payload: context }) => { state.context = context }
+    setAppContext: (state, { payload: context }) => { state.context = context },
+    setActiveGroup: (state, { payload: activeGroup }) => {state.context.activeGroup = activeGroup}
   }
 });
 

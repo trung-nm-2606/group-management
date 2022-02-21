@@ -7,14 +7,26 @@ import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import Avatar from '@mui/material/Avatar';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemText from '@mui/material/ListItemText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import PersonIcon from '@mui/icons-material/Person';
+import { blue, green } from '@mui/material/colors';
+import appRedux from '../redux/app';
 
 const Info = () => {
   const activeGroup = useSelector(state => state.app.context?.activeGroup);
+  const dispatch = useDispatch();
   const [groupInfo, setGroupInfo] = useState(null);
   const [error, setError] = useState(null);
   const [gettingGroupInfo, setGettingGroupInfo] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const getGroupInfo = useCallback((groupPk) => {
     if (!groupPk || groupPk < 0) {
@@ -48,8 +60,26 @@ const Info = () => {
   }, []);
 
   useEffect(() => {
-    getGroupInfo(activeGroup.pk);
+    getGroupInfo(activeGroup?.pk);
   }, [activeGroup, getGroupInfo]);
+
+  const handleClose = () => {
+    setOpen(true);
+  };
+
+  const handleListItemClick = (value) => {
+    setOpen(false);
+    axios
+      .post(`/api/groups/${value}/set-active`)
+      .then((res) => {
+        const { oper, activeGroup } = res.data;
+        if (oper?.status) {
+          dispatch(appRedux.actions.setActiveGroup(activeGroup));
+        }
+      })
+      .catch(() => {})
+    ;
+  };
 
   if (error) {
     return (
@@ -86,7 +116,11 @@ const Info = () => {
               </Typography>
             </CardContent>
             <CardActions>
-              <Button size="small" style={{ textTransform: "none" }}>Change group</Button>
+              <Button
+                size="small"
+                style={{ textTransform: "none" }}
+                onClick={() => setOpen(true)}
+              >Change group</Button>
             </CardActions>
           </Card>
         </Grid>
@@ -110,6 +144,24 @@ const Info = () => {
           </Card>
         </Grid>
       </Grid>
+      <Dialog onClose={handleClose} open={open}>
+        <DialogTitle>Select active group</DialogTitle>
+        <List sx={{ pt: 0 }}>
+          {(groupInfo?.groups || []).map(({ pk, name, position }) => (
+            <ListItem button onClick={() => handleListItemClick(pk)} key={pk}>
+              <ListItemAvatar>
+                <Avatar sx={{
+                  bgcolor: pk === activeGroup?.pk ? green[100] : blue[100],
+                  color: pk === activeGroup?.pk ? green[600] : blue[600]
+                }}>
+                  <PersonIcon />
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText sx={{ color: pk === activeGroup?.pk ? green[600] : 'inherit' }} primary={name} secondary={`(${position})`} />
+            </ListItem>
+          ))}
+        </List>
+      </Dialog>
     </>
   );
 };

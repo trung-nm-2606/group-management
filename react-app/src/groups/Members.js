@@ -82,21 +82,23 @@ const Members = () => {
       {error && (
         <Alert severity="error" sx={{ marginBottom: 1 }}>{error}</Alert>
       )}
-      <Grid container mb={1} alignItems="center" justifyContent="flex-start" direction="row">
-        <Grid item mr={1}>
-          <Input
-            placeholder="Email address"
-            style={{ minWidth: '320px' }}
-            value={newMemberEmail}
-            onChange={onNewMemberEmailChange}
-          />
+      {activeGroup?.position === 'owner' && (
+        <Grid container mb={1} alignItems="center" justifyContent="flex-start" direction="row">
+          <Grid item mr={1}>
+            <Input
+              placeholder="Email address"
+              style={{ minWidth: '320px' }}
+              value={newMemberEmail}
+              onChange={onNewMemberEmailChange}
+            />
+          </Grid>
+          <Grid item>
+          <LoadingButton loading={addingMember} variant="outlined" onClick={onAddNewMember}>
+            Add Member
+          </LoadingButton>
+          </Grid>
         </Grid>
-        <Grid item>
-        <LoadingButton loading={addingMember} variant="outlined" onClick={onAddNewMember}>
-          Add Member
-        </LoadingButton>
-        </Grid>
-      </Grid>
+      )}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="members listing" size="small">
           <TableHead>

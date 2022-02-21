@@ -78,4 +78,18 @@ repo.removeMembersFromGroup = async (groupPk, memberPks = []) => {
   }
 };
 
+repo.setActiveGroupByUserPk = async (activeGroupPk, userPk) => {
+  try {
+    const query1 = 'update groups_users set active = 0 where active = 1 and user_pk = ?;';
+    await db.query(query1, [userPk]);
+
+    const query2 = 'update groups_users set active = 1 where group_pk = ? and user_pk = ?;';
+    const r = await db.query(query2, [activeGroupPk, userPk]);
+    if (r.affectedRows === 1) return true;
+    return false;
+  } catch (e) {
+    return false;
+  }
+};
+
 module.exports = repo;

@@ -33,6 +33,28 @@ const checkGroupPermission = async (req, res, next) => {
   }
 };
 
+const checkGroupAccessPermission = async (req, res, next) => {
+  const userPk = userServices.getAuthenticatedUser(req)?.pk;
+  const { group_pk: groupPk } = req.params;
+
+  if (!groupPk) {
+    res.json({ oper: { status: false, error: 'Group not found' } });
+    return;
+  }
+
+  try {
+    const groups = await groupRepo.findGroupsByUserPk(userPk);
+    const group = groups.find(g => +g.group_pk === +groupPk);
+    if (!group || +group.pk !== +groupPk) {
+      res.json({ oper: { status: false, error: 'You do not have permission on this group' } });
+    } else {
+      next();
+    }
+  } catch (e) {
+    res.json({ oper: { status: false, error: 'Cannot operate on this group' } });
+  }
+};
+
 /**
  * Return all groups which are
  * - owned by the logged-in user
@@ -109,12 +131,16 @@ const getAllMembersByGroupPk = async (req, res) => {
 const getGroupInfoByGroupPk = async (req, res) => {
   try {
     const groupPk = req.params.group_pk;
+    const userPk = userServices.getAuthenticatedUser(req)?.pk;
+
     const members = await groupRepo.findMembersOfGroup(groupPk);
+    const groups = await groupRepo.findGroupsByUserPk(userPk);
     const fundItems = await fundRepo.findAllFundItemsByGroupPk(groupPk);
     res.json({
       pk: groupPk,
       numberOfMembers: members.length,
-      numberOfFundItems: fundItems.length
+      numberOfFundItems: fundItems.length,
+      groups: groups.map(({ pk, name, position }) => ({ pk, name, position }))
     });
   } catch (e) {
     res.json({});
@@ -160,6 +186,22 @@ const leaveGroup = async (req, res) => {
   }
 };
 
+const setActiveGroup = async (req, res) => {
+  try {
+    const userPk = userServices.getAuthenticatedUser(req)?.pk;
+    const success = await groupRepo.setActiveGroupByUserPk(req.params.group_pk, userPk);
+    if (success) {
+      const activeGroup = await groupRepo.findActiveGroupByUserPk(userPk);
+      const { pk, name, desc, position } = activeGroup || {};
+      res.json({ oper: { status: true }, activeGroup: { pk, name, desc, position } });
+    } else {
+      res.json({ oper: { status: false, error: 'Cannot set active group' } });
+    }
+  } catch (e) {
+    res.json({ oper: { status: false, error: 'Cannot set active group' } });
+  }
+};
+
 const api = express.Router();
 api.get('/', shared.checkUserAuth, getAllGroupsByUserPk);
 api.get('/:group_pk/members', shared.checkUserAuth, getAllMembersByGroupPk);
@@ -167,6 +209,7 @@ api.get('/:group_pk/info', shared.checkUserAuth, getGroupInfoByGroupPk);
 api.post('/:group_pk/add_members', shared.checkUserAuth, checkGroupPermission, addMembersToGroup);
 api.post('/:group_pk/add_member_by_email', shared.checkUserAuth, checkGroupPermission, addMemberToGroupByEmail);
 api.post('/:group_pk/remove_members', shared.checkUserAuth, checkGroupPermission, removeMembersFromGroup);
+api.post('/:group_pk/set-active', shared.checkUserAuth, checkGroupAccessPermission, setActiveGroup);
 api.post('/:group_pk/leave', shared.checkUserAuth, checkGroupPermission, leaveGroup);
 
 module.exports = api;
