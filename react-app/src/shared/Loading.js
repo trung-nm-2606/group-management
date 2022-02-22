@@ -6,7 +6,6 @@ import { Typography } from '@mui/material';
 const Loading = ({
   loading = true,
   loadingMessage = 'Loading...',
-  error = null,
   children
 }) => {
   return (
